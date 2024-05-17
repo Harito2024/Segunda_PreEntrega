@@ -1,37 +1,53 @@
 const socket = io()
 
-let user
 
-const chatBox= document.getElementById('chatBox')
+socket.on('products', (products)=>{
+    const tbody = document.getElementById('products_body')
+    tbody.innerHTML = ''
 
-Swal.fire({
-    title: 'Indetificate',
-    input: 'text',
-    text: 'Ingresa un nombre de usuario',
-    inputValidator: (value)=>{
-        return !value && 'Necesitas escribir un nombre de usuario'
-    },
-    allowOutsideClick: false,
-}).then(result =>{
-    user=result.value
-})
+    products.forEach(product => {
+        const row = tbody.insertRow()
 
-chatBox.addEventListener('keyup', (event) =>{
-    if(event.key === 'Enter'){
-        if(chatBox.value.trim().length>0){
-            socket.emit('chat', {user: user, message:chatBox.value} )
-        }
-        chatBox.value=''
-    }
-})
-
-socket.on('messagesLogs', data=>{
-    let log = document.getElementById('messagesLogs')
-    let messages= ''
-    
-    data.forEach(message => {
-         messages = messages + `${message.user} dice: ${message.message}<br>`
+        row.innerHTML=`
+        <td>${product._id}</td>
+        <td>${product.title}</td>
+        <td>${product.description}</td>
+        <td>${product.price}</td>
+        <td>${product.code}</td>
+        <td>${product.stock}</td>
+        <td>${product.category}</td>
+        <td>${product.status}</td>
+        <td>${product.thumbnails}</td>
+        `
     });
-    log.innerHTML = messages
 })
 
+const form = document.getElementById('product_form')
+
+form.addEventListener('submit', function (event){
+    event.preventDefault()
+
+    const title = document.getElementById('title').value
+    const description = document.getElementById('description').value
+    const price = document.getElementById('price').value
+    const code = document.getElementById('code').value
+    const stock = document.getElementById('stock').value
+    const category = document.getElementById('category').value
+    const status = document.getElementById('status').value
+    const thumbnail = document.getElementById('thumbnail').value
+
+   
+    const product ={
+        title : title,
+        description : description,
+        price : price,
+        code : code,
+        stock : stock,
+        category : category,
+        status: status,
+        thumbnail : thumbnail
+    }
+    
+    socket.emit('addProduct', product)
+    form.requestFullscreen()
+})

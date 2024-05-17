@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const app = express()
 const PORT = 8080
 const handlebars = require('express-handlebars')
-const {Server, Socket} = require('socket.io')
+const {Server} = require('socket.io')
 
 
 const productsRouter = require('./routes/products.router.js')
@@ -27,7 +27,7 @@ app.use(express.json())
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname+'/views')
 app.set('view engine', 'handlebars')
-app.use(express.static(__dirname+'/public'))
+app.use(express.static(__dirname +'/public'))
 
 
 //Mongoo
@@ -42,17 +42,17 @@ app.use('/api', messagesRouter)
 app.use('/api', userRouter)
 app.use('/', viewsRouter)
 
-let messages = []
 
 
 socketServer.on('connection', async (socket)=>{
     console.log('Cliente conectado')
 
     let products = await productsModel.find()
-    socket.emit('products', products)
+    socket.emit('products', {products})
 
-    socket.on('addProduct', product =>{
-        const newProduct = productsModel.create({...product})
+    socket.on('addProduct', async product =>{
+        const newProduct = await productsModel.create({...product})
+        console.log(newProduct)
         if(newProduct){
             products.push(newProduct)
             socket.emit('products', products)
@@ -65,11 +65,9 @@ socketServer.on('connection', async (socket)=>{
     socket.on('message', async (data)=>{
         const newMessage = await messagesModel.create({...data})
         if(newMessage){
-            const message = await messagesModel.find()
+            const messages = await messagesModel.find()
             socket.emit('messageLogs', messages)
         }
     })
-
     socket.broadcast.emit('New User')
-    
 })

@@ -26,11 +26,11 @@ router.get('/products/:uid', async (req, res) => {
 })
 
 router.post('/products', async (req, res) => {
-    let { title, description, price, thumbnail, code, stock } = req.body
-    if (!title || !description || !price || !thumbnail || !code || !stock) {
+    let { title, description, code, price, status, stock, thumbnail, category  } = req.body
+    if (!title || !description || !code || !price || !status || !stock || !thumbnail || !category) {
         res.send({ status: 'error', error: 'Faltan Parametros' })
     }
-    let result = await productsModel.create({ title, description, price, thumbnail, code, stock })
+    let result = await productsModel.create({ title, description, code, price, status, stock, thumbnail, category })
 
 
     res.send({ result: 'success', payload: result })
@@ -39,6 +39,7 @@ router.post('/products', async (req, res) => {
 router.put('/products/:uid', async (req, res) => {
     let { uid } = req.params
     let productToReplace = req.body
+    
     if (!productToReplace.title || !productToReplace.description || !productToReplace.price || !productToReplace.thumbnail || !productToReplace.code || !productToReplace.stock) {
         res.send({ status: 'error', error: 'Faltan Parametros' })
     }

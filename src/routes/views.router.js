@@ -6,13 +6,18 @@ const productsModel = require('../models/products.model.js')
 
 
 router.get('/', async (req, res)=>{
-    const products = productsModel.find()
-    return res.render('products', { products})
+    let products = await productsModel.find().lean()
+    return res.render('home', {products})
+})
+
+router.get('/realTimeProducts', async (req, res)=>{
+    return res.render('realTimeProducts')
 })
 
 router.get('/chat', async (req, res)=>{
-    return res.render('chat')
+    let messages = await messagesModel.find()
+    return res.render('chat', {messages})
 })
 
 
-module.exports = router;
+module.exports = router

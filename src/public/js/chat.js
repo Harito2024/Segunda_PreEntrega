@@ -12,16 +12,16 @@ socket.on('message', (message)=>{
 
 
 socket.on('messageLogs', (data)=>{
-    mostrar(data)
+    mostrar(data) 
 })
 
 const mostrar= (arrayMessage)=>{
     let messages = ''
 
     arrayMessage.forEach(mess => {
-        const identUser = message.user === user
+        const identUser = mess.user === user
         const messageClass = identUser ? 'my-message' : ' other-message'
-        message = message + `<div class='${messageClass}> ${message.user}: ${message.message}</div>`
+        messages = messages + `<div class='${messageClass}> ${mess.user}: ${mess.message}</div>`
     });
 
     messageLogs.innerHTML = messages
