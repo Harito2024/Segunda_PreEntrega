@@ -11,8 +11,8 @@ const cartsRouter = require('./routes/carts.router.js')
 const messagesRouter = require('./routes/messages.router.js')
 const userRouter = require('./routes/user.router.js')
 const viewsRouter = require('./routes/views.router.js')
-const productsModel = require('./models/products.model.js')
-const messagesModel = require('./models/messages.model.js')
+const productsModel = require('./dao/models/products.model.js')
+const messagesModel = require('./dao/models/messages.model.js')
 
 
 //Escuchando Puerto
@@ -48,7 +48,8 @@ socketServer.on('connection', async (socket)=>{
     console.log('Cliente conectado')
 
     let products = await productsModel.find()
-    socket.emit('products', {products})
+
+    socket.emit('products', {products:products})
 
     socket.on('addProduct', async product =>{
         const newProduct = await productsModel.create({...product})
@@ -64,6 +65,7 @@ socketServer.on('connection', async (socket)=>{
 
     socket.on('message', async (data)=>{
         const newMessage = await messagesModel.create({...data})
+        console.log(newMessage)
         if(newMessage){
             const messages = await messagesModel.find()
             socket.emit('messageLogs', messages)

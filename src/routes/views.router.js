@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const messagesModel = require('../models/messages.model.js')
-const productsModel = require('../models/products.model.js')
+const messagesModel = require('../dao/models/messages.model.js')
+const productsModel = require('../dao/models/products.model.js')
 
 
 

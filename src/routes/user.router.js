@@ -1,14 +1,14 @@
 const express = require('express')
 const router = express.Router()
-const ProductManager = require('../controllers/product-manager.js')
-const userModel = require('../models/user.model.js')
+const ProductManager = require('../dao/controllers/product-manager.js')
+const userModel = require('../dao/models/user.model.js')
 const manager = new ProductManager('../data/carritos.json')
 
 
 
 router.get('/user', async (req, res) => {
     try {
-        let user = await userModel.find()
+        let user = await userModel.find().lean()
         res.send({ result: 'success', payload: user })
     } catch (error) {
         console.log(error)

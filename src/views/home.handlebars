@@ -1,11 +1,12 @@
 <div>
-    <h1>Bienvenidos a Handlebars</h1>
-
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <h1>Bienvenidos a Handlebars</h1>
+    </nav>
     <h2>Productos</h2>
-    <table>
+    <table class="table table-sm">
         <thead>
             <tr>
-                <th>id</th>
+                {{!-- <th>id</th> --}}
                 <th>Titulo</th>
                 <th>Descripcion</th>
                 <th>Precio</th>
@@ -19,7 +20,7 @@
         <tbody>
             {{#each products}}
             <tr>
-                <td>{{this._id}}</td>
+                {{!-- <td>{{this._id}}</td> --}}
                 <td>{{this.title}}</td>
                 <td>{{this.description}}</td>
                 <td>{{this.price}}</td>

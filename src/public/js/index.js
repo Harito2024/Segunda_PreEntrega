@@ -4,12 +4,12 @@ const socket = io()
 socket.on('products', (products)=>{
     const tbody = document.getElementById('products_body')
     tbody.innerHTML = ''
-
-    products.forEach(product => {
+    console.log(products)
+    products.products.forEach(product => {
         const row = tbody.insertRow()
 
         row.innerHTML=`
-        <td>${product._id}</td>
+        
         <td>${product.title}</td>
         <td>${product.description}</td>
         <td>${product.price}</td>
@@ -24,8 +24,8 @@ socket.on('products', (products)=>{
 
 const form = document.getElementById('product_form')
 
-form.addEventListener('submit', function (event){
-    event.preventDefault()
+form.addEventListener('submit', function (e){
+    e.preventDefault()
 
     const title = document.getElementById('title').value
     const description = document.getElementById('description').value
@@ -49,5 +49,5 @@ form.addEventListener('submit', function (event){
     }
     
     socket.emit('addProduct', product)
-    form.requestFullscreen()
+    form.reset()
 })

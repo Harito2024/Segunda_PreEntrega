@@ -1,13 +1,13 @@
 const express = require('express')
 const router = express.Router()
 //const ProductManager = require('../controllers/product-manager.js')
-const productsModel = require('../models/products.model.js')
+const productsModel = require('../dao/models/products.model.js')
 //const manager = new ProductManager('../data/products.json')
 
 
 router.get('/products', async (req, res) => {
     try {
-        let products = await productsModel.find()
+        let products = await productsModel.find().lean()
         res.send({ result: 'success', payload: products })
     } catch (error) {
         console.log(error)
