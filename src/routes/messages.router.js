@@ -55,7 +55,6 @@ router.delete('/messages/:uid', async (req, res) => {
 })
 
 router.delete('/messages', async (req, res) => {
-    let { uid } = req.params
 
     let result = await messagesModel.deleteMany()
 
