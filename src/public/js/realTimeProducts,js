@@ -22,7 +22,7 @@ socket.on('products', (products)=>{
     });
 })
 
-/* const form = document.getElementById('product_form')
+const form = document.getElementById('product_form')
 
 form.addEventListener('submit', function (e){
     e.preventDefault()
@@ -50,4 +50,4 @@ form.addEventListener('submit', function (e){
     
     socket.emit('addProduct', product)
     form.reset()
-}) */
+})

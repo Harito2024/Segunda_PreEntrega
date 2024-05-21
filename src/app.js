@@ -49,14 +49,14 @@ socketServer.on('connection', async (socket)=>{
 
     let products = await productsModel.find()
 
-    socket.emit('products', {products:products})
+    socket.emit('products', {products})
 
     socket.on('addProduct', async product =>{
         const newProduct = await productsModel.create({...product})
         console.log(newProduct)
         if(newProduct){
             products.push(newProduct)
-            socket.emit('products', products)
+            socket.emit('products', {products})
         }
     })
 
