@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+exports.router = router
 //const ProductManager = require('../controllers/product-manager.js')
 const productsModel = require('../dao/models/products.model.js')
 //const manager = new ProductManager('../data/products.json')
@@ -14,49 +15,35 @@ router.get('/products', async (req, res) => {
     }
 })
 
-router.get('/products/:uid', async (req, res) => {
-    let { uid } = req.params
-    if (!uid) {
-        res.send({ status: 'error', error: 'Debe buscar por ID del producto' })
-    }
-
-    let result = await productsModel.find({ _id: uid })
-    res.send({ result: 'success', payload: result })
-
-})
-
 router.post('/products', async (req, res) => {
     let { title, description, code, price, status, stock, thumbnail, category  } = req.body
     if (!title || !description || !code || !price || !status || !stock || !thumbnail || !category) {
         res.send({ status: 'error', error: 'Faltan Parametros' })
     }
-    let result = await productsModel.create({ title, description, code, price, status, stock, thumbnail, category })
+    let product = await productsModel.create({ title, description, code, price, status, stock, thumbnail, category })
 
 
-    res.send({ result: 'success', payload: result })
+    res.send({ result: 'success', payload: product })
 })
 
-router.put('/products/:uid', async (req, res) => {
-    let { uid } = req.params
+router.put('/products/:pid', async (req, res) => {
+    let { pid } = req.params
     let productToReplace = req.body
     
     if (!productToReplace.title || !productToReplace.description || !productToReplace.price || !productToReplace.thumbnail || !productToReplace.code || !productToReplace.stock) {
         res.send({ status: 'error', error: 'Faltan Parametros' })
     }
-    let result = await productsModel.updateOne({ _id: uid }, productToReplace)
-    res.send({ result: 'success', payload: result })
+    let product = await productsModel.updateOne({ _id: pid }, productToReplace)
+    res.send({ result: 'success', payload: product })
 })
 
-router.delete('/products/:uid', async (req, res) => {
-    let { uid } = req.params
+router.delete('/products/:pid', async (req, res) => {
+    let { pid } = req.params
 
-    let result = await productsModel.deleteOne({ _id: uid })
+    let product = await productsModel.deleteOne({ _id: pid })
 
-    res.send({ result: 'success', payload: result })
+    res.send({ result: 'success', payload: product })
 })
-
-
-
 
 
 module.exports = router

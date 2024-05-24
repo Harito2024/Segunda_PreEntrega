@@ -14,7 +14,6 @@ const viewsRouter = require('./routes/views.router.js')
 const productsModel = require('./dao/models/products.model.js')
 const messagesModel = require('./dao/models/messages.model.js')
 
-
 //Escuchando Puerto
 const httpServer = app.listen(PORT, () => {console.log(`Server running on port ${PORT}`)})
 const socketServer = new Server(httpServer)
@@ -31,9 +30,16 @@ app.use(express.static(__dirname +'/public'))
 
 
 //Mongoo
-mongoose.connect('mongodb+srv://Ezequiel_280:Juancho_2013@ezequiel280.xegphwu.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Ezequiel280')
-.then(()=>{console.log('Conectado a base de datos')})
-.catch(error =>console.error('Error al conectarse a la base de datos'))
+const enviroment = async ()=>{
+
+    await mongoose.connect('mongodb+srv://Ezequiel_280:Juancho_2013@ezequiel280.xegphwu.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Ezequiel280')
+    .then(()=>{console.log('Conectado a base de datos')})
+    .catch(error =>console.error('Error al conectarse a la base de datos'))
+    
+
+}
+
+enviroment()
 
 //Rutas
 app.use('/api', productsRouter)
@@ -41,8 +47,6 @@ app.use('/api', cartsRouter)
 app.use('/api', messagesRouter)
 app.use('/api', userRouter)
 app.use('/', viewsRouter)
-
-
 
 socketServer.on('connection', async (socket)=>{
     console.log('Cliente conectado')
@@ -71,5 +75,5 @@ socketServer.on('connection', async (socket)=>{
             socket.emit('messageLogs', messages)
         }
     })
-    socket.broadcast.emit('New User')
+    socket.broadcast.emit('new_user')
 })

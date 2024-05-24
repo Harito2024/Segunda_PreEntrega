@@ -2,45 +2,46 @@ const socket = io()
 
 let user;
 let chatBox = document.getElementById('chatBox')
-let messageLogs = document.getElementById('messageLogs')
+let log = document.getElementById('messageLogs')
 
 let data;
 
-socket.on('message', (message)=>{
-    data= message
+socket.on('message', (msg)=>{
+    data = msg
 })
 
 
-socket.on('messageLogs', (data)=>{
-    mostrar(data) 
+socket.on('messageLogs', msgs=>{
+    renderizar(msgs)
 })
 
-const mostrar= (arrayMessage)=>{
+const renderizar = (msgs)=>{
     let messages = ''
 
-    arrayMessage.forEach(mess => {
-        const identUser = mess.user === user
-        const messageClass = identUser ? 'my-message' : ' other-message'
-        messages = messages + `<div class='${messageClass}> ${mess.user}: ${mess.message}</div>`
+    msgs.forEach(message => {
+        const isCurrentUser = message.user === user
+        const messageClass = isCurrentUser ? 'my-message' : ' other-message'
+        messages = messages + `<div class='${messageClass}'>${message.user}: ${message.message}</div>`
     });
 
-    messageLogs.innerHTML = messages
+    log.innerHTML = messages
     chatBox.scrollIntroView(false)
 }
 
 
 Swal.fire({
     title: 'Indetificate',
-    input: 'text',
+    input: 'email',
     text: 'Ingresa un nombre de usuario',
     inputValidator: (value)=>{
-        return !value && 'Necesitas escribir un nombre de usuario'
+        if(!value)
+        return 'Necesitas escribir un nombre de usuario'
     },
     allowOutsideClick: false,
 }).then(result =>{
     if(result.isConfirmed){
         user=result.value
-        mostrar(data)
+        renderizar(data)
     }
 })
 
@@ -54,10 +55,10 @@ chatBox.addEventListener('keyup', event =>{
     }
 })
 
-socket.on('New User', ()=>{
+socket.on('new_user', ()=>{
     Swal.fire({
         text: 'Un nuevo usuario se conecto',
         toast: true,
-        position: 'top-right'
+        position: 'top-center'
     })
 })

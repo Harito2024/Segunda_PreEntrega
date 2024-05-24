@@ -7,10 +7,8 @@ const cartModel = require('../dao/models/carts.model.js')
 
 router.get('/carts', async (req, res)=>{
     try {
-
          let result = await cartModel.find()
          res.send({ result: 'success', payload: result })
-
     } catch (error) {
         console.log(error)
     }
@@ -20,10 +18,10 @@ router.get('/carts/:cid', async (req, res)=>{
     try {
          let {cid} = req.params
          if(!cid){
-            res.send({ status: 'error', error: 'Debe buscar por ID del producto' })
+            res.send({ status: 'error', error: 'Debe buscar por ID del Carrito'})
          }
-         let result = await cartModel.findById({_id: cid})
-         res.send({ result: 'success', payload: result })
+         let cart = await cartModel.findById({_id: cid})
+         res.send({ result: 'success', payload: cart })
 
     } catch (error) {
         console.log(error)
