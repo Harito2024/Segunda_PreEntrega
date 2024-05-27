@@ -32,3 +32,13 @@ Este es un paso a paso para crear el servidor para el proyecto
 
 
 13- Guardamos y verificacmos que la consola responda 
+
+git init -y
+
+para actualizar
+git add .
+git status
+git commit -m "escribir el commit"
+git push origin main
+
+
