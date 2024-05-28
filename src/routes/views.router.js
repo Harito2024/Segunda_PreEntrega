@@ -20,21 +20,22 @@ router.get('/chat',(req, res)=>{
 
 
 
-router.get('/products/:filter',async (req, res)=>{
+router.get('/products/:filter/:limit',async (req, res)=>{
     let page = req.query.page;
-    let limit = parseInt(req.query.limit) || 10;
+    let limit = parseInt(req.params.limit) || 10;
     let filter = req.params.filter
     console.log(filter)
 
-    let result  = await productsModel.paginate({category:filter}, {limit:1, page, lean:true})
+    let result  = await productsModel.paginate({category:filter}, {limit, page, lean:true})
     console.log(result)
     if(!page) page = 1
-    result.prevLink = result.hasPrevPage?`http://localhost:8080/products/${filter}?page=${result.prevPage}`:'';
-    result.nextLink = result.hasNextPage?`http://localhost:8080/products/${filter}?page=${result.nextPage}`:'';
+    result.prevLink = result.hasPrevPage?`http://localhost:8080/products/${filter}/${limit}?page=${result.prevPage}`:'';
+    result.nextLink = result.hasNextPage?`http://localhost:8080/products/${filter}/${limit}?page=${result.nextPage}`:'';
     result.isValid= !(page<=0||page>result.totalPages)
     res.render('products',result)
     
 })
+
 
 
 module.exports = router
