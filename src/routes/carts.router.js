@@ -7,111 +7,100 @@ const productModel = require('../dao/models/products.model.js')
 const { CURSOR_FLAGS } = require('mongodb')
 
 
-router.get('/carts', async (req, res)=>{
+router.get('/carts', async (req, res) => {
     try {
-         let carts = await cartModel.find()
-         res.send({ result: 'success', payload: carts })
+        let carts = await cartModel.find()
+        res.send({ result: 'success', payload: carts })
     } catch (error) {
         console.log(error)
     }
 })
 
-router.get('/carts/:cid', async (req, res)=>{
+router.get('/carts/:cid', async (req, res) => {
     try {
-         const {cid} = req.params
-         const cart = await cartModel.findById({_id: cid})
+        const { cid } = req.params
+        const cart = await cartModel.findById(cid).populate('products.id')
 
-         if(!cart){
-            res.send({ status: 'error', error: 'El carrito buscado no existe'})
-         }
-         res.send({ result: 'success', payload: cart })
+        if (!cart) {
+            res.send({ status: 'error', error: 'El carrito buscado no existe' })
+        }
+        res.send({ result: 'success', payload: cart })
 
     } catch (error) {
         console.log(error)
     }
 })
 
-router.post('/carts', async (req, res)=>{
+router.post('/carts', async (req, res) => {
     try {
         const cart = await cartModel.create({})
-        res.send({ result: 'success', payload: cart })
+        res.send({ cart })
     } catch (error) {
         console.log(error)
     }
 })
 
-
-
-router.put('/carts/:cid/product/:pid', async (req, res)=>{
+router.post('/carts/:cid/product/:pid', async (req, res) => {
     try {
-        const {cid, pid} = req.params
-        let result = await cartModel.findById({_id: cid})
-        let product
-        if(!result){
-            return res.send({status: 'error', error: 'El numero de carrito no existe'})
-        }
-        const productInCart = result.products.find(item=>item.id.toString() === pid)
-        
-        if(!productInCart){
-            product = await productModel.findById({_id:pid})
-            result.products.push({id:pid, quantity:1, product})
-        }else{
-            productInCart.quantity++
-        }
-        result = await cartModel.updateOne({_id:cid}, result)
-        res.send({ result: 'success', payload: result })
+        const { cid, pid } = req.params
+        let cart = await cartModel.findById({ _id: cid })
 
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-router.delete('/carts/:cid/product/:pid', async (req, res)=>{
-    try {
-        let {cid, pid} = req.params
-
-        let result = await cartModel.findById({_id: cid})
-        product = result.products.find(id=>id.id==pid)
-         
-
-        if(product){
-            if(product.quantity=1){
-                result = result.products.filter(id=>id.id!=pid)
-                console.log(result)
+        if (!cart) {
+            res.send({ status: 'error', error: 'El carrito no existe' })
+        } else {
+            const productInCart = cart.products.find(p => p.id.toString() == pid)
+            if (productInCart) {
+                productInCart.quantity++
+            } else {
+                cart.products.push({ id: pid, quantity: 1 })
             }
-        }else{
-            product.quantity = product.quantity -1
+            cart.save()
+            res.send({ cart })
         }
-        result = await cartModel.updateOne({_id:cid}, result)
-
-
-        res.send({ result: 'success', payload: result })
 
     } catch (error) {
         console.log(error)
     }
 })
 
-router.delete('/carts/:cid', async (req, res)=>{
+router.delete('/carts/:cid/product/:pid', async (req, res) => {
     try {
-        let {cid} = req.params
-
-        let result = await cartModel.findById({_id: cid})
-        
-        if(result){
-            result = await cartModel.deleteOne({_id:cid})
-            res.send({ result: 'success', payload: result })
-        }else{
-            return res.send('Carrito no encontrado')
-        }
-
+        let { cid, pid } = req.params
+        let result = await cartModel.findByIdAndUpdate(cid, { $pull: { 'products': { id: pid } } }, { new: true })
+        res.send({ result: 'success', payload: result })
     } catch (error) {
         console.log(error)
     }
 })
 
 
+router.put('/carts/:cid/product/:pid', async (req, res) => {
+    try {
+        let { cid, pid } = req.params
+        const { quantity } = req.body
+        if (!Number(quantity)) {
+            console.log(quantity)
+            res.send('La cantidad debe ser un numero')
+        } 
+            let result = await cartModel.findOneAndUpdate(
+                { _id: cid, 'products.id': pid },
+                { $set: { 'products.$.quantity': quantity } },
+                { new: true })
+        res.send({ result: 'success', payload: result })
+    } catch (error) {
+        console.log(error)
+    }
+})
 
+router.put('/carts/:cid', async (req, res) => {
+    try {
+        let { cid } = req.params 
+            let result = await cartModel.findByIdAndUpdate(cid, {$set:{'products':[]} },{new:true})
+        res.send({ result: 'success', payload: result })
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 
 

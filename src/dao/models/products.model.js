@@ -13,6 +13,15 @@ const productsSchema = new mongoose.Schema({
     thumbnail:{type: String},
     category: {type: String, required: true, max:100}
 })
+
+
+productsSchema.set('toJSON',{
+    transform:function(doc, ret){
+        delete ret.__v
+        return ret
+    }
+})
+
 productsSchema.plugin(mongoosePaginate)
 
 const productsModel=mongoose.model(productsColletion, productsSchema)

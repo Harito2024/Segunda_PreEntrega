@@ -5,18 +5,19 @@ const mongoose = require('mongoose')
 const cartColletion = 'Cart'
 
 const cartSchema = new mongoose.Schema({
+    
     products:[{
-        id:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref:'Products'
-        },
-        quantity:{
-            type: Number,
-            required: [true]
-        },
-        product:{type:Object}
-
+        _id: false,
+        id:{type: mongoose.Schema.Types.ObjectId,ref:'Products'},
+        quantity:{type: Number, required: [true]}
     }]
+})
+
+cartSchema.set('toJSON',{
+    transform:function(doc, ret){
+        delete ret.__v
+        return ret
+    }
 })
 
 
